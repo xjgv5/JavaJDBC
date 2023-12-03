@@ -7,21 +7,24 @@ public class EjemploJDBC {
         String url = "jdbc:mysql://localhost:3306/java_curso?serverTimezone=Mexico/General";
         String username = "root";
         String password = "admin";
-        try {
-            Connection conection = DriverManager.getConnection(url, username, password);
-            Statement statement = conection.createStatement();
-            ResultSet resultado = statement.executeQuery("SELECT * FROM productos");
+
+        try(Connection conection = DriverManager.getConnection(url, username, password);
+        Statement statement = conection.createStatement();
+        ResultSet resultado = statement.executeQuery("SELECT * FROM productos")) {
 
             while (resultado.next()){
-                System.out.println(resultado.getString("nombre"));
+                System.out.print(resultado.getInt(1));
+                System.out.print("\t");
+                System.out.print(resultado.getString("nombre"));
+                System.out.print("\t");
+                System.out.print("$" + resultado.getInt("precio"));
+                System.out.print("\t");
+                System.out.println(resultado.getDate("fecha_registro"));
             }
-            resultado.close();
-            statement.close();
-            conection.close();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
 
     }
 }
