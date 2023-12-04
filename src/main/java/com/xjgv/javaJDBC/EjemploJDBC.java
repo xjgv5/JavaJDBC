@@ -1,5 +1,8 @@
 package com.xjgv.javaJDBC;
 
+import com.xjgv.javaJDBC.modelo.Producto;
+import com.xjgv.javaJDBC.repositorio.ProductoRepositorioImpl;
+import com.xjgv.javaJDBC.repositorio.Repositorio;
 import com.xjgv.javaJDBC.util.ConexionBaseDatos;
 
 import java.sql.*;
@@ -7,19 +10,11 @@ import java.sql.*;
 public class EjemploJDBC {
     public static void main(String[] args) {
 
-        try(Connection conection = ConexionBaseDatos.getInstance();
-        Statement statement = conection.createStatement();
-        ResultSet resultado = statement.executeQuery("SELECT * FROM productos")) {
+        try(Connection conection = ConexionBaseDatos.getInstance()) {
+            Repositorio<Producto> repositorio = new ProductoRepositorioImpl();
+            repositorio.listar().forEach(System.out::println);
 
-            while (resultado.next()){
-                System.out.print(resultado.getInt(1));
-                System.out.print("\t");
-                System.out.print(resultado.getString("nombre"));
-                System.out.print("\t");
-                System.out.print("$" + resultado.getInt("precio"));
-                System.out.print("\t");
-                System.out.println(resultado.getDate("fecha_registro"));
-            }
+            System.out.println(repositorio.porId(1L));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
