@@ -47,7 +47,15 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
 
     @Override
     public void guardar(Producto producto) {
+        String sql = "INSERT INTO productos(nombre, precio, fecha_registro) VALUES (?, ?, ?)";
+        try(PreparedStatement statement = obtenerConexion().prepareStatement(sql)){
+            statement.setString(1, producto.getNombre());
+            statement.setLong(2, producto.getPrecio());
+            statement.setDate(3, new Date(producto.getFechaRegistro().getTime()));
 
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
