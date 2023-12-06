@@ -34,9 +34,10 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
         try(PreparedStatement statement = obtenerConexion().
                 prepareStatement("SELECT * FROM productos WHERE id = ?")) {
             statement.setLong(1, id);
-            ResultSet resultado = statement.executeQuery();
-            if(resultado.next()){
-                producto = crearProducto(resultado);
+            try (ResultSet resultado = statement.executeQuery()) {
+                if (resultado.next()) {
+                    producto = crearProducto(resultado);
+                }
             }
         }
         catch (SQLException e) {
@@ -47,12 +48,27 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
 
     @Override
     public void guardar(Producto producto) {
-        String sql = "INSERT INTO productos(nombre, precio, fecha_registro) VALUES (?, ?, ?)";
+        String sql;
+        if (producto.getId() != 0 && producto.getId() > 0) {
+            sql = "UPDATE productos SET nombre=? precio=? WHERE id=?";
+        } else {
+            sql = "INSERT INTO productos(nombre, precio, fecha_registro) VALUES (?, ?, ?)";
+
+        }
         try(PreparedStatement statement = obtenerConexion().prepareStatement(sql)){
             statement.setString(1, producto.getNombre());
             statement.setLong(2, producto.getPrecio());
-            statement.setDate(3, new Date(producto.getFechaRegistro().getTime()));
 
+
+            if (producto.getId() != 0 && producto.getId() > 0) {
+                statement.setLong(3, producto.getId());
+            }
+            else {
+                statement.setDate(3, new Date(producto.getFechaRegistro().getTime()));
+
+            }
+
+            statement.executeUpdate();
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -60,6 +76,12 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
 
     @Override
     public void eliminar(Long id) {
+        try(PreparedStatement statement = obtenerConexion().prepareStatement("DELTE FROM productos WHERE id=? ")) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
