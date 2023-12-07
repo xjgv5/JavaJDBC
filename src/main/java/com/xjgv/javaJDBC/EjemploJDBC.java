@@ -1,5 +1,6 @@
 package com.xjgv.javaJDBC;
 
+import com.xjgv.javaJDBC.modelo.Categoria;
 import com.xjgv.javaJDBC.modelo.Producto;
 import com.xjgv.javaJDBC.repositorio.ProductoRepositorioImpl;
 import com.xjgv.javaJDBC.repositorio.Repositorio;
@@ -22,17 +23,20 @@ public class EjemploJDBC {
 
             System.out.println("********************** Obtener por ID **********************");
             Producto producto = new Producto();
-            producto.setNombre("Teclado mecanico");
+            //producto.setId(5L);
+            producto.setNombre("Teclado Red Dragon mecanico");
             producto.setPrecio(500);
             producto.setFechaRegistro(new Date());
-
+            Categoria categoria = new Categoria();
+            categoria.setId(3L);
+            producto.setCategoria(categoria);
             repositorio.guardar(producto);
             System.out.println("Producto guardado con exito");
 
             repositorio.listar().forEach(System.out::println);
             
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.getMessage();
         }
 
     }
